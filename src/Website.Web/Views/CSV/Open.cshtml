@@ -1,14 +1,79 @@
-﻿@{
-    Layout = null;
+﻿@model Website.Files.CSVDto
+@{
+    var errorData = ViewData["ErrDataList"] as List<Dictionary<string, string>>;
+}
+<h1>CSV Data View</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            @foreach (var columnName in Model.Header.Split(';', ','))
+            {
+                <th>@columnName</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in (List<Dictionary<string, string>>)ViewData["ContentList"])
+        {
+            <tr>
+                @foreach (var kvp in row)
+                {
+                    <td>@kvp.Value</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="text-center fs-3">
+    @if ((int)ViewData["TotalPages"] > 1)
+    {
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <!-- Add justify-content-center class here -->
+                @if ((int)ViewData["CurrentPage"] > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("View", new { id = Model.Id, page = (int)ViewData["CurrentPage"] - 1 })" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                }
+
+                @for (int pge = Math.Max(1, (int)ViewData["CurrentPage"] - 3); pge <= Math.Min((int)ViewData["TotalPages"], (int)ViewData["CurrentPage"] + 3); pge++)
+                {
+                    <li class="page-item @(pge == (int)ViewData["CurrentPage"] ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("View", new { id = Model.Id, page = pge })">@pge</a>
+                    </li>
+                }
+
+                @if ((int)ViewData["CurrentPage"] < (int)ViewData["TotalPages"])
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("View", new { id = Model.Id, page = (int)ViewData["CurrentPage"] + 1 })" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>
+
+
+@if (((List<Dictionary<string, string>>)ViewData["ErrorContentList"]).Count == 0)
+{
+    <h1 class="text-success">List has no Error Data</h1>
+}
+else
+{
+    <h1 class="text-danger">Here is the error Data List</h1>
+
+    <a asp-controller="CSV" asp-action="SecondView" asp-route-id="@Model.Id" class="btn btn-primary">Error List View</a>
 }
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Open CSV File</title>
-</head>
-<body>
-    <h1>Open CSV File Page</h1>
-</body>
-</html>
+}
+

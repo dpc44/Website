@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.PortableExecutable;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Website.Files;
@@ -66,66 +67,27 @@ namespace Website.Web.Controllers
 
 
 
-
+        [HttpGet("CSV/ViewById/{id}")]
         public async Task<IActionResult> View(Guid id, int page =1)
         {
             const int ItemsPerPage = 20;
 
             var csv = await _CSVAppService.GetCSVById(id);
-            var columnHeaders = csv.Header.Split(';',',');
-
-            using (var reader = new StringReader(csv.Content))
-            {
-                var records = new List<Dictionary<string, string>>();
-                var errRecords = new List<Dictionary<string, string>>();
-                string line;
-                
-                while ((line = reader.ReadLine()) != null && line != "")
-                {
-                    var values = line.Split(';', ',');
-                    var record = new Dictionary<string, string>();
-                    var errRecord = new Dictionary<string, string>();
-                    if(values.Length == columnHeaders.Length)
-                    {
-                        for (var i = 0; i < columnHeaders.Length; i++)
-                        {
-                            var columnName = columnHeaders[i];
-                            var value = values[i];
-                            record[columnName] = value;
-                        }
-
-                        records.Add(record);
-                    }
-                    else
-                    {
-                        for (var i = 0; i < columnHeaders.Length; i++)
-                        {
-                            var columnName = columnHeaders[i];
-                            var value = values[i];
-                            errRecord[columnName] = value;
-                        }
-
-                        errRecords.Add(errRecord);
-                    }
-                   
-                }
-
-                //pagination for Records
-                int totalPages = (int)Math.Ceiling((double)records.Count / ItemsPerPage);
-                var pagedRecords = records.Skip((page - 1) * ItemsPerPage).Take(ItemsPerPage).ToList();
-                ViewData["ContentList"] = pagedRecords;
-                ViewData["TotalPages"] = totalPages;
-                ViewData["CurrentPage"] = page;
-
-
-                ViewData["ErrorContentList"] = errRecords;
-                TempData["ErrorContentList2"] = "ABC";
-            }
-
-
-
-
             
+
+            var records = _CSVAppService.CVSList(csv);
+            var errRecords = _CSVAppService.ErrorCVSList(csv);
+            //pagination for Records
+            int totalPages = (int)Math.Ceiling((double)records.Count / ItemsPerPage);
+            var pagedRecords = records.Skip((page - 1) * ItemsPerPage).Take(ItemsPerPage).ToList();
+            ViewData["ContentList"] = pagedRecords;
+            ViewData["TotalPages"] = totalPages;
+            ViewData["CurrentPage"] = page;
+
+
+            ViewData["ErrorContentList"] = errRecords;
+            TempData["ErrorContentList2"] = "ABC";
+
 
 
             return View(csv);
@@ -138,48 +100,13 @@ namespace Website.Web.Controllers
 
 
             var csv = await _CSVAppService.GetCSVById(id);
-            var columnHeaders = csv.Header.Split(';', ',');
 
-            using (var reader = new StringReader(csv.Content))
-            {
-
-                var errRecords = new List<Dictionary<string, string>>();
-                string line;
-
-                while ((line = reader.ReadLine()) != null && line != "")
-                {
-                    var values = line.Split(';', ',');
-
-                    var errRecord = new Dictionary<string, string>();
-                    if (values.Length != columnHeaders.Length)
-                    {
-
-                        for (var i = 0; i < columnHeaders.Length; i++)
-                        {
-                            var columnName = columnHeaders[i];
-                            var value = values[i];
-                            errRecord[columnName] = value;
-                        }
-
-                        errRecords.Add(errRecord);
-                    }
-
-                }
-
-                //pagination for Records
-
-
-                int totalPages = (int)Math.Ceiling((double)errRecords.Count / ItemsPerPage);
-                var pagedRecords = errRecords.Skip((page - 1) * ItemsPerPage).Take(ItemsPerPage).ToList();
-                ViewData["ErrorContentList"] = pagedRecords;
-                ViewData["TotalPages"] = totalPages;
-                ViewData["CurrentPage"] = page;
-
-
-
-            }
-
-
+            var errRecords = _CSVAppService.ErrorCVSList(csv);
+            int totalPages = (int)Math.Ceiling((double)errRecords.Count / ItemsPerPage);
+            var pagedRecords = errRecords.Skip((page - 1) * ItemsPerPage).Take(ItemsPerPage).ToList();
+            ViewData["ErrorContentList"] = pagedRecords;
+            ViewData["TotalPages"] = totalPages;
+            ViewData["CurrentPage"] = page;
             return View(csv);
 
         }
@@ -192,26 +119,45 @@ namespace Website.Web.Controllers
             if (file != null && file.Length > 0)
             {
                 // Process the file data as needed
-                TempData["FileName"] = file.FileName;
-                TempData["CSVFile"] = file;
+                var csvDto = new CSVDto
+                {
+                    Name = file.FileName,
+                    TypeFile = file.ContentType,
+                    Content = "Content Content",
+                    Header = "Header Header"
+                };
+
+                var data = ProcessFileData(file);
+                TempData["fileCSV"] = JsonSerializer.Serialize(data);
                 return Json(new { success = true, fileName = file.FileName });
             }
 
             // Handle the case when no file is uploaded or the file is empty.
             return Json(new { success = false });
         }
-
-        public IActionResult Open(string fileId)
+        [HttpGet("CSV/ViewByFileId/{fileId}")]
+        public IActionResult View(string fileId , int page = 1)
         {
             if (!string.IsNullOrEmpty(fileId))
             {
                 // Retrieve the file data using the fileId from TempData or other storage options
-                string fileName = TempData["FileName"] as string;
-                var file = TempData["CSVFile"] as IFormFile;
-                // Pass the file name to the view
-                ViewData["FileName"] = fileName;
 
-                return View();
+                var data = TempData["fileCSV"].ToString();
+                //Variables
+                CSVDto csv = JsonSerializer.Deserialize<CSVDto>(data);
+                var records = _CSVAppService.CVSList(csv);
+                var errRecords = _CSVAppService.ErrorCVSList(csv);
+                const int ItemsPerPage = 20;
+                //pagination for Records
+                int totalPages = (int)Math.Ceiling((double)records.Count / ItemsPerPage);
+                var pagedRecords = records.Skip((page - 1) * ItemsPerPage).Take(ItemsPerPage).ToList();
+                ViewData["ContentList"] = pagedRecords;
+                ViewData["TotalPages"] = totalPages;
+                ViewData["CurrentPage"] = page;
+
+
+                ViewData["ErrorContentList"] = errRecords;
+                return View(csv);
             }
 
             return NoContent();
@@ -219,6 +165,23 @@ namespace Website.Web.Controllers
 
 
 
+        private CSVDto ProcessFileData(IFormFile file)
+        {
+            // Read the file content and convert it into a CSVDto
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            {
+                var columnHeaders = reader.ReadLine();
+                var content = reader.ReadToEnd();
+
+                return new CSVDto
+                {
+                    Name = file.FileName,
+                    TypeFile = file.ContentType,
+                    Content = content,
+                    Header = columnHeaders
+                };
+            }
+        }
 
 
 

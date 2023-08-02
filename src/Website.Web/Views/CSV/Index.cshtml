@@ -48,8 +48,8 @@ else
     </table>
 }
 @section Scripts {
-<script>
-    $('#btnOpen').click(function (e) {
+    <script>
+        $('#btnOpen').click(function (e) {
             if (window.FormData !== undefined) {
                 var files = $("#csvFile")[0].files;
                 var formData = new FormData();
@@ -62,9 +62,8 @@ else
                     processData: false,
                     success: function (data) {
                         if (data.success) {
-                            console.log(data.fileName);
-                            var url = '@Url.Action("Open", "CSV")' + '?fileId=' + data.fileName;
-                            window.location.replace(url);
+                            // Redirect to the "Open" action with the CSVDto object
+                            window.location.href = '@Url.Action("ViewByFileId", "CSV")' + "/" + data.fileName;
                         } else {
                             alert("Error occurred while opening the file.");
                         }
@@ -78,6 +77,6 @@ else
             else {
                 alert("FormData is not supported.");
             }
-    });
-</script>
+        });
+    </script>
 }

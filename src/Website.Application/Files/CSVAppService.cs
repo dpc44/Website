@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +39,75 @@ namespace Website.Files
                 var csv = await _fileAppService.GetAsync(id);
                 return ObjectMapper.Map<CSV, CSVDto>(csv);
             
+        }
+        public List<Dictionary<string, string>> CVSList(CSVDto csv)
+        {
+            var columnHeaders = csv.Header.Split(';', ',');
+
+            using (var reader = new StringReader(csv.Content))
+            {
+                var records = new List<Dictionary<string, string>>();
+                string line;
+
+                while ((line = reader.ReadLine()) != null && line != "")
+                {
+                    var values = line.Split(';', ',');
+                    var record = new Dictionary<string, string>();
+                    if (values.Length == columnHeaders.Length)
+                    {
+                        for (var i = 0; i < columnHeaders.Length; i++)
+                        {
+                            var columnName = columnHeaders[i];
+                            var value = values[i];
+                            record[columnName] = value;
+                        }
+
+                        records.Add(record);
+                    }
+
+                }
+                 return records;
+
+            }
+        }
+
+        public List<Dictionary<string, string>> ErrorCVSList(CSVDto csv)
+        {
+            var columnHeaders = csv.Header.Split(';', ',');
+
+            using (var reader = new StringReader(csv.Content))
+            {
+
+                var errRecords = new List<Dictionary<string, string>>();
+                string line;
+
+                while ((line = reader.ReadLine()) != null && line != "")
+                {
+                    var values = line.Split(';', ',');
+
+                    var errRecord = new Dictionary<string, string>();
+                    if (values.Length != columnHeaders.Length)
+                    {
+
+                        for (var i = 0; i < columnHeaders.Length; i++)
+                        {
+                            var columnName = columnHeaders[i];
+                            var value = values[i];
+                            errRecord[columnName] = value;
+                        }
+
+                        errRecords.Add(errRecord);
+                    }
+
+                }
+
+
+                return errRecords;
+
+
+
+
+            }
         }
     }
 }
