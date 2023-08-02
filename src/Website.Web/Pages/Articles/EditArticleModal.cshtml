@@ -1,0 +1,27 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Website.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model Website.Web.Pages.Articles.EditArticleModalModel
+@inject IHtmlLocalizer<WebsiteResource> L
+@{
+    Layout = null;
+}
+<form method="post" action="@Url.Page("/Articles/EditArticleModal")">
+    <abp-modal>
+        <abp-modal-header title="@Model.Article.Name"></abp-modal-header>
+        <abp-modal-body>
+            <abp-input asp-for="@Model.Id" />
+            <abp-input asp-for="@Model.Article.Name" />
+            <abp-select asp-for="@Model.Article.Status" />
+            <abp-select asp-for="@Model.Article.IdentityUserId" asp-items="@Model.Users" />
+            <abp-select asp-for="@Model.Article.CategoryId" asp-items="@Model.Categories" />
+            <abp-date-picker asp-for="@Model.Article.DateCreation" />
+            <abp-date-picker asp-for="@Model.Article.DatePublishment" />
+            <abp-input asp-for="@Model.Article.ContentBody" />
+            <abp-input asp-for="@Model.Article.Teaser" />
+            <abp-input asp-for="@Model.imageFile"  />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>

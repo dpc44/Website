@@ -1,0 +1,83 @@
+﻿@model List<Website.Files.CSVDto>
+
+<h1>Index CSV FIle</h1>
+
+@if (Model.Count() == 0)
+{
+    <p>No CSV data available.</p>
+}
+else
+{
+    <form method="post" enctype="multipart/form-data" asp-action="UploadCSVFile" asp-controller="CSV">
+        <div class="form-group">
+            <label for="csvFile">Upload CSV File:</label>
+            <input type="file" name="csvFile" class="form-control-file" id="csvFile">
+        </div>
+        <button type="submit" class="btn btn-primary">Upload</button>
+        <a id="btnOpen" name="btnOpen" class="btn btn-primary">Open</a>
+    </form>
+
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(m => m[0].Name)</th>
+                <th>@Html.DisplayNameFor(m => m[0].TypeFile)</th>
+                @*<th>@Html.DisplayNameFor(m => m[0].Content)</th>
+                <th>@Html.DisplayNameFor(m => m[0].Header)</th>*@
+                <!-- Add more table headers for additional columns as needed -->
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name </td>
+                    <td>@item.TypeFile</td>
+                    @*<td>@item.Content</td>
+                    <td>@item.Header</td>*@
+                    <!-- Add more table cells for additional columns as needed -->
+                    <td>
+                        <!-- Add a view button for each item -->
+                        <a asp-controller="CSV" asp-action="View" asp-route-id="@item.Id" class="btn btn-primary">View</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@section Scripts {
+<script>
+    $('#btnOpen').click(function (e) {
+            if (window.FormData !== undefined) {
+                var files = $("#csvFile")[0].files;
+                var formData = new FormData();
+                formData.append("file", files[0]);
+                $.ajax({
+                    url: '@Url.Action("Open", "CSV")',
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        if (data.success) {
+                            console.log(data.fileName);
+                            var url = '@Url.Action("Open", "CSV")' + '?fileId=' + data.fileName;
+                            window.location.replace(url);
+                        } else {
+                            alert("Error occurred while opening the file.");
+                        }
+                    },
+                    error: function () {
+                        alert("Error occurred while opening the file.");
+                    }
+                });
+
+            }
+            else {
+                alert("FormData is not supported.");
+            }
+    });
+</script>
+}

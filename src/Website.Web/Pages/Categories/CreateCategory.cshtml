@@ -1,0 +1,16 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Website.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model Website.Web.Pages.Categories.CreateCategoryModel
+@inject IHtmlLocalizer<WebsiteResource> L
+@{
+}
+
+<h1>Create Category</h1>
+
+<form method="post" >
+    <abp-input asp-for="@Model.Categories.Name" />
+    <abp-button button-type="Primary" type="submit">Save</abp-button>
+
+</form>

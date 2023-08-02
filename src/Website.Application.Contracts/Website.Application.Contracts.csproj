@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net7.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Website</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Website.Domain.Shared\Website.Domain.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="System.Json" Version="4.7.1" />
+    <PackageReference Include="Volo.Abp.BlobStoring" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.ObjectExtending" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.Account.Application.Contracts" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.Identity.Application.Contracts" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Application.Contracts" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application.Contracts" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.FeatureManagement.Application.Contracts" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application.Contracts" Version="7.3.0" />
+  </ItemGroup>
+
+</Project>

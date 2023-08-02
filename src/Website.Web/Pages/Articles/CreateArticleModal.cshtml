@@ -1,0 +1,99 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Website.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model Website.Web.Pages.Articles.CreateArticleModalModel
+
+
+@inject IHtmlLocalizer<WebsiteResource> L
+
+@{
+    //Layout = null;
+}
+@*<form method="post" action="@Url.Page("/Articles/CreateArticleModal")">
+    <abp-modal>
+        <abp-modal-header title="@L["NewArticle"].Value"></abp-modal-header>
+        <abp-modal-body>
+
+            <abp-input asp-for="@Model.Article.Name" />
+            <abp-select asp-for="@Model.Article.Status" />
+            <abp-select asp-for="@Model.Article.IdentityUserId" asp-items="@Model.Users" />
+            <abp-select asp-for="@Model.Article.CategoryId" asp-items="@Model.Categories" />
+            <abp-date-picker asp-for="@Model.Article.DateCreation" />
+            <abp-date-picker asp-for="@Model.Article.DatePublishment" />
+            <abp-input asp-for="@Model.Article.ContentBody" />
+            <abp-input asp-for="@Model.Article.Teaser" />
+            <abp-input asp-for="@Model.imageFile" />
+
+        </abp-modal-body>
+        <abp-modal-footer buttons="@AbpModalButtons.Save | @AbpModalButtons.Cancel"></abp-modal-footer>
+    </abp-modal>
+</form>*@
+
+
+<form method="post" enctype="multipart/form-data">
+    <abp-input asp-for="Article.Name" id="name" />
+    <abp-select asp-for="Article.Status" />
+    <abp-select asp-for="Article.IdentityUserId" asp-items="@Model.Users" />
+    <abp-select asp-for="Article.CategoryId" asp-items="@Model.Categories" />
+
+
+
+
+
+
+
+
+    <abp-input asp-for="@Model.imageFile" type="file" id="fileupload" onchange="LoadImage(this)" />
+    <img src="#" id="targetImage" width="150" height="150" style="display:none" />
+    <p class="text-danger" id="text-fileDanger" style="display:none">you only can upload file under 2MB</p>
+
+    <abp-date-picker asp-for="Article.DateCreation" />
+    <abp-date-picker asp-for="Article.DatePublishment" />
+
+
+
+    <input type="file" id="FileUpload1" />
+    <input type="button" id="btnUpload" value="Upload Files" />
+    @*<abp-input asp-for="Article.ContentBody" id="contentBody" />*@
+    
+    @*<input type="file" id="selectImg" />*@
+    <textarea asp-for="Article.ContentBody" id="contentBody"></textarea>
+    <abp-input asp-for="Article.Teaser" />
+
+
+
+
+
+    
+
+
+    <abp-button button-type="Primary" type="submit" id="test">Save</abp-button>
+
+</form>
+
+@section scripts{
+    <abp-script src="/Pages/Articles/JavaScript.js" />
+    
+    <script src="~/libs/ckeditor/ckeditor.js"></script>
+    
+
+    <script type="text/javascript">
+
+
+        CKEDITOR.replace('contentBody',{
+            height:400,
+            filebrowserUploadUrl: '/api/app/upload-image/ckeditor-upload-file',
+            
+        });
+
+
+
+
+        
+
+
+
+
+    </script>
+}

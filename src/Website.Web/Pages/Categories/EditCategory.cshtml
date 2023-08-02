@@ -1,0 +1,17 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Website.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model Website.Web.Pages.Categories.EditCategoryModel
+@inject IHtmlLocalizer<WebsiteResource> L
+@{
+    
+}
+<h3>test Edit</h3>
+
+<form method="post">
+    <abp-input asp-for="@Model.Id" />
+    <abp-input asp-for="@Model.Categories.Name" />
+    <abp-button button-type="Primary" type="submit">Save</abp-button>
+
+</form>

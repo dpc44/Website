@@ -1,0 +1,16 @@
+﻿@page
+
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Website.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model Website.Web.Pages.Articles.ViewArticleModel
+@inject IHtmlLocalizer<WebsiteResource> L
+@{
+}
+<h1>@Model.Article.Name</h1>
+Author: @Model.NameAuthor
+<h2>@Model.Article.Teaser</h2>
+
+<div>
+    @Html.Raw(Model.Article.ContentBody)
+</div>

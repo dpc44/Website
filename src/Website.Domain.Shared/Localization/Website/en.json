@@ -1,0 +1,39 @@
+{
+  "culture": "en",
+  "texts": {
+    "Menu:Home": "Home",
+    "Welcome": "Welcome",
+    "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information, visit abp.io.",
+    "Menu:Website": "Article Management",
+    "Menu:Articles": "Articles",
+    "Menu:CSV": "CSV management",
+
+    "CategoryName": "Category Name",
+    "UserName": "User Name",
+    "Status": "Status",
+    "DatePublishment": "Date of Publishment",
+    "DateCreation": "Date of creation",
+    "Name": "Name",
+    "ContentBody": "Content Body",
+    "Teaser": "Teaser",
+    "Image": "Cover Image",
+    "Enum:Status:0": "Accepted",
+    "Enum:Status:1": "Denied",
+    "Enum:Status:2": "Cancelled",
+    "Enum:Status:3": "Stop",
+    "Enum:Status:4": "NotAvailable",
+
+    "NewArticle": "New Article",
+    "Category": "Category",
+
+    "ProductDeletionConfirmationMessage": "Ban Chac Chan Xoa No Khong :)",
+    "SuccessfullyDeleted": "Ban Da Xoa Thanh Cong",
+    "Menu:Category": "Category Table",
+
+    "WebsiteArticlePermission": "Website Permission",
+    "WebsiteArticleCreate": "Article Creation",
+    "WebsiteArticleDelete": "Article Deletion",
+    "WebsiteArticleList": "Get Article Mangement Table"
+
+  }
+}

@@ -1,0 +1,78 @@
+﻿@page
+@using Microsoft.AspNetCore.Authorization;
+@using Website.Web.Pages.Articles
+@using Microsoft.Extensions.Localization
+@using Website.Localization
+@model IndexModel
+@inject IStringLocalizer<WebsiteResource> L
+@inject IAuthorizationService AuthorizationService
+@section scripts{
+    <abp-script src="/Pages/Articles/Index.cshtml.js" />
+}
+<a href="/CSV/Index">CSV Data</a>
+@if (await AuthorizationService.IsGrantedAsync("Website.ArticleList"))
+{
+    <abp-card>
+        <abp-card-header>
+
+            <abp-row>
+                <abp-column size-md="_4">
+                    <abp-card-title>@L["Menu:Articles"]</abp-card-title>
+
+                </abp-column>
+
+                <abp-column size-md="_4">
+                    <form id="test">
+                        <input type="text" placeholder="Search.." id="Search">
+                        <button type="submit" id="test"><i class="fa fa-search"></i></button>
+                    </form>
+
+                </abp-column>
+
+
+
+
+                @*@if (await AuthorizationService.IsGrantedAsync("Website.ArticleCreate"))
+                {
+                    <abp-column size-md="_4" class="text-end">
+                        <abp-button id="NewArticleButton"
+                                    text="@L["NewArticle"].Value"
+                                    icon="plus"
+                                    button-type="Primary" />
+                    </abp-column>
+
+                }*@
+
+                <abp-column size-md="_4" class="text-end">
+                    <a href="/Articles/CreateArticleModal" class="btn btn-success">Create</a>
+                </abp-column>
+                
+            </abp-row>
+
+        </abp-card-header>
+        <abp-card-body>
+            <abp-table id="ArticlesTable" striped-rows="true" />
+        </abp-card-body>
+    </abp-card>
+}
+
+
+
+<abp-card>
+    <abp-card-header>
+
+        <abp-row>
+            <abp-column size-md="_6">
+                <abp-card-title>@L["Menu:Category"]</abp-card-title>
+
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+                <a href="/Categories/CreateCategory" class="btn btn-success">Create</a>
+            </abp-column>
+        </abp-row>
+
+    </abp-card-header>
+    <abp-card-body>
+        <abp-table id="CategoryTable" striped-rows="true" />
+    </abp-card-body>
+</abp-card>
