@@ -8,7 +8,7 @@
 }
 else
 {
-    <form method="post" enctype="multipart/form-data" asp-action="UploadCSVFile" asp-controller="CSV">
+    <form id="uploadForm" method="post" enctype="multipart/form-data" >
         <div class="form-group">
             <label for="csvFile">Upload CSV File:</label>
             <input type="file" name="csvFile" class="form-control-file" id="csvFile">
@@ -17,7 +17,12 @@ else
         <a id="btnOpen" name="btnOpen" class="btn btn-primary">Open</a>
     </form>
 
-
+    <div class="progress" style="display: none">
+        <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+            0%
+        </div>
+    </div>
+    <div id="lblMessage" style="color: Green"></div>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -48,8 +53,53 @@ else
     </table>
 }
 @section Scripts {
-    
-    <script>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#uploadForm').submit(function (e) {
+                e.preventDefault();
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: '@Url.Action("UploadCSVFile", "CSV")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function (evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = (evt.loaded / evt.total) * 100;
+                                $('.progress').show();
+                                $('.progress-bar').css('width', percentComplete + '%').text(percentComplete.toFixed(2) + '%');
+                            }
+                        }, false);
+                        return xhr;
+                    },
+                    success: function (data) {
+                        if (data.success) {
+                            $('#lblMessage').html("<b>" + data.name + "</b> has been uploaded.");
+                            location.reload();
+                        } else {
+                            // Handle failure response
+                            alert("Error occurred while uploading the file.");
+                        }
+                        $('.progress').hide();
+                        $('.progress-bar').css('width', '0%').text('0%');
+                    },
+                    error: function () {
+                        alert("Error occurred while uploading the file.");
+                        $('.progress').hide();
+                        $('.progress-bar').css('width', '0%').text('0%');
+                    }
+                });
+            });
+        });
+
+
+
         $('#btnOpen').click(function (e) {
             if (window.FormData !== undefined) {
                 var files = $("#csvFile")[0].files;

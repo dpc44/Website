@@ -1,6 +1,7 @@
 ﻿
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,10 +22,11 @@ namespace Website.Web.Controllers
     public class CSVController : Controller
     {
         private readonly ICSVAppService _CSVAppService;
-        
-        public CSVController (ICSVAppService csvAppService)
+        private readonly IWebHostEnvironment _env;
+        public CSVController (ICSVAppService csvAppService, IWebHostEnvironment env)
         {
             _CSVAppService = csvAppService;
+            _env = env;
         }
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -37,7 +39,22 @@ namespace Website.Web.Controllers
         {
             if (csvFile != null && csvFile.Length > 0)
             {
-                using (var reader = new StreamReader(csvFile.OpenReadStream()))
+                //save the file to folder
+                var rootPath = _env.WebRootPath;
+                var csvFolderPath = Path.Combine(rootPath, "CSVfiles");
+                Directory.CreateDirectory(csvFolderPath);
+                var uniqueFileName = $"{Guid.NewGuid()}_{csvFile.FileName}";
+                var filePath = Path.Combine(csvFolderPath, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await csvFile.CopyToAsync(stream);
+                }
+
+
+
+
+                using (var reader = new StreamReader(filePath))
                 {
                     // Read the first line to get the column headers
                     var columnHeaders = reader.ReadLine();
@@ -58,21 +75,22 @@ namespace Website.Web.Controllers
 
 
                         //////// 
-                            var csv = new CSVDto
+                        var csv = new CSVDto
                         {
-                            Name = csvFile.FileName,
+                            Name = uniqueFileName,
                             TypeFile = csvFile.ContentType,
                             Content = content,
                             Header = columnHeaders
                         };
 
-                       await _CSVAppService.addCSVData(csv);
+                        await _CSVAppService.addCSVData(csv);
                     }
-                        
+
                 }
+                return Json(new { success = true, name = csvFile.FileName });
             }
 
-            return RedirectToAction("Index");
+            return Json(new { success = false });
         }
 
 
