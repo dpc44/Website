@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿
+using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,7 @@ namespace Website.Web.Controllers
     public class CSVController : Controller
     {
         private readonly ICSVAppService _CSVAppService;
+        
         public CSVController (ICSVAppService csvAppService)
         {
             _CSVAppService = csvAppService;
@@ -42,8 +44,21 @@ namespace Website.Web.Controllers
                     if (columnHeaders != null)
                     {
                         var content = reader.ReadToEnd();
+                        //////////
+                        /*using (var reader2 = new StringReader(content))
+                        {
+                            string line;
+                            while ((line = reader2.ReadLine()) != null && line != "")
+                            {
+                                var values = line.Split(';', ',');
+                            }
+                        }*/
 
-                        var csv = new CSVDto
+
+
+
+                        //////// 
+                            var csv = new CSVDto
                         {
                             Name = csvFile.FileName,
                             TypeFile = csvFile.ContentType,
