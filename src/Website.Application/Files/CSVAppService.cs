@@ -15,9 +15,12 @@ namespace Website.Files
     public class CSVAppService : WebsiteAppService , ICSVAppService
     {
         private readonly IRepository<CSV, Guid> _fileAppService;
-        public CSVAppService (IRepository<CSV, Guid> fileAppService)
+        private readonly IRepository<TableList, Guid> _tableList;
+
+        public CSVAppService (IRepository<CSV, Guid> fileAppService, IRepository<TableList, Guid> tableList)
         {
             _fileAppService = fileAppService;
+            _tableList = tableList;
         }
         public async Task<List<CSVDto>> GetListAsync()
         {
@@ -28,11 +31,14 @@ namespace Website.Files
 
         public async Task addCSVData(CSVDto csvData)
         {
-            _fileAppService.InsertAsync(ObjectMapper.Map<CSVDto, CSV>(csvData));
+          await  _fileAppService.InsertAsync(ObjectMapper.Map<CSVDto, CSV>(csvData));
             
         }
 
-
+        public async Task addCSVData2 (TableListDto csvData)
+        {
+           await _tableList.InsertAsync(ObjectMapper.Map<TableListDto, TableList>(csvData));
+        }
         public async Task<CSVDto> GetCSVById(Guid id)
         {
            

@@ -14,7 +14,7 @@ using System.Reflection;
 using System.Reflection.PortableExecutable;
 using System.Text.Json;
 using System.Threading.Tasks;
-
+using Volo.Abp.Domain.Repositories;
 using Website.Files;
 
 namespace Website.Web.Controllers
@@ -23,10 +23,12 @@ namespace Website.Web.Controllers
     {
         private readonly ICSVAppService _CSVAppService;
         private readonly IWebHostEnvironment _env;
-        public CSVController (ICSVAppService csvAppService, IWebHostEnvironment env)
+        private readonly IRepository<TableList, Guid> _tableList;
+        public CSVController (ICSVAppService csvAppService, IWebHostEnvironment env, IRepository<TableList, Guid> tableList)
         {
             _CSVAppService = csvAppService;
             _env = env;
+            _tableList = tableList;
         }
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -62,20 +64,41 @@ namespace Website.Web.Controllers
                     {
                         var content = reader.ReadToEnd();
                         //////////
-                        /*using (var reader2 = new StringReader(content))
+                        using (var reader2 = new StringReader(content))
                         {
                             string line;
+                            var headers = columnHeaders.Split(';', ',');
                             while ((line = reader2.ReadLine()) != null && line != "")
                             {
                                 var values = line.Split(';', ',');
+                                
+                                //if (values.Length == headers.Length)
+                                //{
+                                    // Create a new TableList entity and populate its properties
+                                    var tableListEntity = new TableListDto
+                                    {
+                                        Variable = values[0],
+                                        Breakdown = values[1],
+                                        BreakdownCategory = values[2],
+                                        Year = values[3],
+                                        RdValue = values[4],
+                                        Status = values[5],
+                                        Unit = values[6],
+                                        Footnotes = values[7],
+                                        RelativeSamplingError = values[8]
+                                    };
+
+                                    // Add the entity to the list
+                                    await _CSVAppService.addCSVData2(tableListEntity);
+                                //}
                             }
-                        }*/
+                        }
 
 
 
 
                         //////// 
-                        var csv = new CSVDto
+                       /*var csv = new CSVDto
                         {
                             Name = uniqueFileName,
                             TypeFile = csvFile.ContentType,
@@ -83,7 +106,7 @@ namespace Website.Web.Controllers
                             Header = columnHeaders
                         };
 
-                        await _CSVAppService.addCSVData(csv);
+                        await _CSVAppService.addCSVData(csv);*/
                     }
 
                 }

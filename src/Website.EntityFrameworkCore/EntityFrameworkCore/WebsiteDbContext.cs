@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Net.Http.Headers;
+using System.Reflection.Emit;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -62,6 +63,7 @@ public class WebsiteDbContext :
     public DbSet<Article> ArticlesWebsite { get; set; }
 
     public DbSet<CSV> CSVWebsite { get; set; }
+    public DbSet<TableList> TableList { get; set; }
     #endregion
 
     public WebsiteDbContext(DbContextOptions<WebsiteDbContext> options)
@@ -84,7 +86,7 @@ public class WebsiteDbContext :
         builder.ConfigureOpenIddict();
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
-
+        //builder.Entity<TableList>().HasNoKey();
         /* Configure your own tables/entities inside here */
 
         //builder.Entity<YourEntity>(b =>
@@ -93,7 +95,7 @@ public class WebsiteDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
-        
+
 
 
     }

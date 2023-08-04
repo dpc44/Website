@@ -11,7 +11,7 @@ namespace Website.Files
     {
         Task<List<CSVDto>> GetListAsync();
         Task addCSVData (CSVDto csvData);
-
+        Task addCSVData2 (TableListDto csvData);
         Task<CSVDto> GetCSVById(Guid id);
         List<Dictionary<string, string>> CVSList(CSVDto csv);
         List<Dictionary<string, string>> ErrorCVSList(CSVDto csv);

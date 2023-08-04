@@ -7,6 +7,7 @@ namespace Website.Files
 {
     public class CSVDto : AuditedEntityDto<Guid>
     {
+
         public string Name { get; set; }
         public string TypeFile { get; set; }
         public string Content { get; set; }
