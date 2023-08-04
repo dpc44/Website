@@ -25,5 +25,6 @@ public class WebsiteApplicationAutoMapperProfile : Profile
         CreateMap<CSV, CSVDto>();
         CreateMap<CSVDto, CSV>();
         CreateMap<TableListDto, TableList>();
+        CreateMap<TableList, TableListDto>();
     }
 }

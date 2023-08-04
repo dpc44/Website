@@ -1,0 +1,74 @@
+﻿@model List<Website.Files.TableListDto>
+
+<h2>View Two</h2>
+
+<!-- Display the table with paged records -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Variable</th>
+            <th>Breakdown</th>
+            <th>Breakdown Category</th>
+            <th>Year</th>
+            <th>Rd Value</th>
+            <th>Status</th>
+            <th>Unit</th>
+            <th>Footnotes</th>
+            <th>Relative Sampling Error</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var record in Model)
+        {
+            <tr>
+                <td>@record.Variable</td>
+                <td>@record.Breakdown</td>
+                <td>@record.BreakdownCategory</td>
+                <td>@record.Year.ToShortDateString()</td>
+                <td>@record.RdValue</td>
+                <td>@record.Status</td>
+                <td>@record.Unit</td>
+                <td>@record.Footnotes</td>
+                <td>@record.RelativeSamplingError</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Add pagination links -->
+<nav class="d-flex justify-content-center mt-4">
+    <ul class="pagination">
+        @if (ViewBag.TotalPages > 1)
+        {
+            @if (ViewBag.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("ViewTwo", new { page = ViewBag.CurrentPage - 1, pageSize = ViewBag.PageSize })">Previous</a>
+                </li>
+            }
+
+            @for (int i = Math.Max(1, ViewBag.CurrentPage - 5); i <= Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 5); i++)
+            {
+                if (i == ViewBag.CurrentPage)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">@i</span>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("ViewTwo", new { page = i, pageSize = ViewBag.PageSize })">@i</a>
+                    </li>
+                }
+            }
+
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("ViewTwo", new { page = ViewBag.CurrentPage + 1, pageSize = ViewBag.PageSize })">Next</a>
+                </li>
+            }
+        }
+    </ul>
+</nav>

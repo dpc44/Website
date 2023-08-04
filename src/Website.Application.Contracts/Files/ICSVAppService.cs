@@ -15,5 +15,6 @@ namespace Website.Files
         Task<CSVDto> GetCSVById(Guid id);
         List<Dictionary<string, string>> CVSList(CSVDto csv);
         List<Dictionary<string, string>> ErrorCVSList(CSVDto csv);
+        Task<Tuple<List<TableListDto>, int>> GetItemPerPage(int ItemsPerPage,  int CurrentPage);
     }
 }

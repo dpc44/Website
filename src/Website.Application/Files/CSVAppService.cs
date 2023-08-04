@@ -115,5 +115,14 @@ namespace Website.Files
 
             }
         }
+
+        public async Task<Tuple<List<TableListDto>, int>> GetItemPerPage(int ItemsPerPage, int CurrentPage)
+        {
+            var records = await _tableList.GetListAsync();
+            int totalPages = (int)Math.Ceiling((double)records.Count / ItemsPerPage);
+            var pagedRecords = records.Skip((CurrentPage - 1) * ItemsPerPage).Take(ItemsPerPage).ToList();
+
+            return new Tuple<List<TableListDto>, int>(ObjectMapper.Map<List<TableList>, List<TableListDto>>(pagedRecords), totalPages);
+        }
     }
 }

@@ -15,7 +15,10 @@ using System.Reflection.PortableExecutable;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Website.Files;
+using AutoMapper.Internal.Mappers;
 
 namespace Website.Web.Controllers
 {
@@ -54,62 +57,21 @@ namespace Website.Web.Controllers
                 }
 
 
-
-
-                using (var reader = new StreamReader(filePath))
+                using (var streamReader = new StreamReader(filePath))
                 {
-                    // Read the first line to get the column headers
-                    var columnHeaders = reader.ReadLine();
-                    if (columnHeaders != null)
+                    using(var csvReader = new CsvReader(streamReader, new CsvConfiguration(CultureInfo.InvariantCulture)))
                     {
-                        var content = reader.ReadToEnd();
-                        //////////
-                        using (var reader2 = new StringReader(content))
+                        csvReader.Context.RegisterClassMap<TableListMap>();
+                        var records = csvReader.GetRecords<TableList>();
+                        foreach (var record in records)
                         {
-                            string line;
-                            var headers = columnHeaders.Split(';', ',');
-                            while ((line = reader2.ReadLine()) != null && line != "")
-                            {
-                                var values = line.Split(';', ',');
-                                
-                                //if (values.Length == headers.Length)
-                                //{
-                                    // Create a new TableList entity and populate its properties
-                                    var tableListEntity = new TableListDto
-                                    {
-                                        Variable = values[0],
-                                        Breakdown = values[1],
-                                        BreakdownCategory = values[2],
-                                        Year = values[3],
-                                        RdValue = values[4],
-                                        Status = values[5],
-                                        Unit = values[6],
-                                        Footnotes = values[7],
-                                        RelativeSamplingError = values[8]
-                                    };
-
-                                    // Add the entity to the list
-                                    await _CSVAppService.addCSVData2(tableListEntity);
-                                //}
-                            }
+                            await _tableList.InsertAsync(record);
                         }
 
-
-
-
-                        //////// 
-                       /*var csv = new CSVDto
-                        {
-                            Name = uniqueFileName,
-                            TypeFile = csvFile.ContentType,
-                            Content = content,
-                            Header = columnHeaders
-                        };
-
-                        await _CSVAppService.addCSVData(csv);*/
                     }
-
                 }
+
+
                 return Json(new { success = true, name = csvFile.FileName });
             }
 
@@ -119,7 +81,13 @@ namespace Website.Web.Controllers
 
 
 
-
+        public async Task<IActionResult> ViewTwo(int page = 1, int pageSize = 30)
+        {
+            var result = await _CSVAppService.GetItemPerPage(pageSize, page);
+            ViewBag.TotalPages = result.Item2;
+            ViewBag.CurrentPage = page;
+            return View(result.Item1);
+        }
 
 
 
