@@ -17,7 +17,7 @@ namespace Website.Files
             Map(m => m.Variable).Name("Variable");
             Map(m => m.Breakdown).Name("Breakdown");
             Map(m => m.BreakdownCategory).Name("Breakdown_category");
-            Map(m => m.Year).Name("Year").TypeConverterOption.Format("yyyy");
+            Map(m => m.Year).Name("Year");
             Map(m => m.RdValue).Name("RD_Value");
             
             Map(m => m.Status).Name("Status");

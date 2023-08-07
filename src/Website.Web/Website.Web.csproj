@@ -58,6 +58,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Views\GoogleSheets\" />
     <Folder Include="wwwroot\ckfinder\userfiles\" />
     <Folder Include="wwwroot\libs\ckfinder\ckfinder\userfiles\" />
     <Folder Include="wwwroot\libs\ckfinder\userfiles\" />

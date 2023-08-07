@@ -10,7 +10,7 @@ namespace Website.Files
         public string Variable { get; set; }
         public string Breakdown { get; set; }
         public string BreakdownCategory { get; set; }
-        public DateTime Year { get; set; }
+        public int Year { get; set; }
         public string RdValue { get; set; }
         public string Status { get; set; }
         public string Unit { get; set; }

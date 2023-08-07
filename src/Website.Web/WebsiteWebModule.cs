@@ -37,6 +37,7 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
+using Website.Web.GoogleSheet;
 
 namespace Website.Web;
 
@@ -93,6 +94,7 @@ public class WebsiteWebModule : AbpModule
         ConfigureNavigationServices();
         ConfigureAutoApiControllers();
         ConfigureSwaggerServices(context.Services);
+        context.Services.AddTransient<GoogleHelper>();
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
