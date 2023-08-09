@@ -80,12 +80,20 @@ namespace Website.Web.Controllers
 
 
 
-
-        public async Task<IActionResult> ViewTwo(int page = 1, int pageSize = 30)
+        [HttpGet]
+        public async Task<IActionResult> ViewTwo(int page = 1, int pageSize = 30, int? startYear = null, int? endYear = null, string? searchTerm =null)
         {
-            var result = await _CSVAppService.GetItemPerPage(pageSize, page);
+            var result = await _CSVAppService.GetItemPerPage(pageSize, page, startYear, endYear, searchTerm);
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_TableView", result.Item1);
+            }
             ViewBag.TotalPages = result.Item2;
             ViewBag.CurrentPage = page;
+            ViewData["ContentList"] = result.Item1;
+            ViewData["SelectedStartYear"] = startYear;
+            ViewData["SelectedEndYear"] = endYear;
+            ViewData["searchTerm"] = searchTerm;
             return View(result.Item1);
         }
 

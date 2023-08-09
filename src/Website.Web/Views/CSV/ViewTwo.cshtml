@@ -1,39 +1,49 @@
-﻿@model List<Website.Files.TableListDto>
+﻿@using Website.Files;
+@model List<Website.Files.TableListDto>
 
 <h2>View Two</h2>
+<form action="@Url.Action("ViewTwo", "CSV")" method="get" id="filterForm">
+    <label for="startYear">Start Year:</label>
+    <select name="startYear" id="startYear">
+        <option value="">All Years</option>
+        @for (int year = 2023; year >= 1989; year--)
+        {
+            if (ViewData["SelectedStartYear"] != null && ViewData["SelectedStartYear"].ToString() == year.ToString())
+            {
+                <option value="@year" selected>@year</option>
+            }
+            else
+            {
+                <option value="@year">@year</option>
+            }
+        }
+    </select>
+
+    <label for="endYear">End Year:</label>
+    <select name="endYear" id="endYear">
+        <option value="">Select End Year</option>
+        @for (int year = 2023; year >= 1989; year--)
+        {
+            if (ViewData["SelectedEndYear"] != null && ViewData["SelectedEndYear"].ToString() == year.ToString())
+            {
+                <option value="@year" selected>@year</option>
+            }
+            else
+            {
+                <option value="@year">@year</option>
+            }
+        }
+    </select>
+    <input type="text" id="searchInput" name="searchTerm" placeholder="Search by Variable..." value="@ViewData["searchTerm"]">
+    <button type="submit">Apply Filter</button>
+</form>
+
 
 <!-- Display the table with paged records -->
-<table class="table">
-    <thead>
-        <tr>
-            <th>Variable</th>
-            <th>Breakdown</th>
-            <th>Breakdown Category</th>
-            <th>Year</th>
-            <th>Rd Value</th>
-            <th>Status</th>
-            <th>Unit</th>
-            <th>Footnotes</th>
-            <th>Relative Sampling Error</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var record in Model)
-        {
-            <tr>
-                <td>@record.Variable</td>
-                <td>@record.Breakdown</td>
-                <td>@record.BreakdownCategory</td>
-                <td>@record.Year</td>
-                <td>@record.RdValue</td>
-                <td>@record.Status</td>
-                <td>@record.Unit</td>
-                <td>@record.Footnotes</td>
-                <td>@record.RelativeSamplingError</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div id="tableContainer">
+    @Html.Partial("_TableView", Model) <!-- Initial table content -->
+</div>
+
 
 <!-- Add pagination links -->
 <nav class="d-flex justify-content-center mt-4">
@@ -43,7 +53,7 @@
             @if (ViewBag.CurrentPage > 1)
             {
                 <li class="page-item">
-                    <a class="page-link" href="@Url.Action("ViewTwo", new { page = ViewBag.CurrentPage - 1, pageSize = ViewBag.PageSize })">Previous</a>
+                    <a class="page-link" href="@Url.Action("ViewTwo", new { page = ViewBag.CurrentPage - 1, pageSize = ViewBag.PageSize, startYear = ViewData["SelectedStartYear"] , endYear = ViewData["SelectedEndYear"],searchTerm = ViewData["searchTerm"] })">Previous</a>
                 </li>
             }
 
@@ -58,7 +68,7 @@
                 else
                 {
                     <li class="page-item">
-                        <a class="page-link" href="@Url.Action("ViewTwo", new { page = i, pageSize = ViewBag.PageSize })">@i</a>
+                        <a class="page-link" href="@Url.Action("ViewTwo", new { page = i, pageSize = ViewBag.PageSize, startYear = ViewData["SelectedStartYear"] , endYear = ViewData["SelectedEndYear"],searchTerm = ViewData["searchTerm"] })">@i</a>
                     </li>
                 }
             }
@@ -66,9 +76,67 @@
             @if (ViewBag.CurrentPage < ViewBag.TotalPages)
             {
                 <li class="page-item">
-                    <a class="page-link" href="@Url.Action("ViewTwo", new { page = ViewBag.CurrentPage + 1, pageSize = ViewBag.PageSize })">Next</a>
+                    <a class="page-link" href="@Url.Action("ViewTwo", new { page = ViewBag.CurrentPage + 1, pageSize = ViewBag.PageSize, startYear = ViewData["SelectedStartYear"] , endYear = ViewData["SelectedEndYear"],searchTerm = ViewData["searchTerm"] })">Next</a>
                 </li>
             }
         }
     </ul>
 </nav>
+@section Scripts{
+    <script type="text/javascript">
+        document.getElementById('filterForm').onsubmit = (e) =>{
+
+            var startYear = document.getElementById("startYear").value;
+            var endYear = document.getElementById("endYear").value;
+            
+            if ((startYear === "" && endYear !== "") || (startYear !== "" && endYear === "")) {
+                e.preventDefault();
+                alert("Please select both start year and end year.");
+            }
+            if (startYear > endYear) {
+                e.preventDefault();
+                alert("startYear cannot larger than endYear");
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function (e) {
+            var searchTerm = e.target.value;
+            var startYear = document.getElementById('startYear').value;
+            var endYear = document.getElementById('endYear').value;
+
+            $.ajax({
+                method: 'get',
+                url: '@Url.Action("ViewTwo", "CSV")',
+                data: {startYear: startYear, endYear: endYear, searchTerm: searchTerm },
+                success: function (result) {
+                    $('#tableContainer').html(result);
+                    var paginationLinks = document.querySelectorAll('.pagination a.page-link');
+                    paginationLinks.forEach(function (link) {
+                        var href = link.getAttribute('href');
+                        if (href) {
+                            var updatedHref = updateQueryStringParameter(href, 'searchTerm', searchTerm);
+                            link.setAttribute('href', updatedHref);
+                        }
+                    });
+                }
+            });
+        });
+
+        function updateQueryStringParameter(uri, key, value) {
+            var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+            var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+            if (uri.match(re)) {
+                return uri.replace(re, '$1' + key + "=" + value + '$2');
+            } else {
+                return uri + separator + key + "=" + value;
+            }
+        }
+
+
+
+
+
+
+
+    </script>
+}

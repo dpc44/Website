@@ -1,0 +1,33 @@
+﻿@model List<Website.Files.TableListDto>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Variable</th>
+            <th>Breakdown</th>
+            <th>Breakdown Category</th>
+            <th>Year</th>
+            <th>Rd Value</th>
+            <th>Status</th>
+            <th>Unit</th>
+            <th>Footnotes</th>
+            <th>Relative Sampling Error</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var record in Model)
+        {
+            <tr>
+                <td>@record.Variable</td>
+                <td>@record.Breakdown</td>
+                <td>@record.BreakdownCategory</td>
+                <td>@record.Year</td>
+                <td>@record.RdValue</td>
+                <td>@record.Status</td>
+                <td>@record.Unit</td>
+                <td>@record.Footnotes</td>
+                <td>@record.RelativeSamplingError</td>
+            </tr>
+        }
+    </tbody>
+</table>
